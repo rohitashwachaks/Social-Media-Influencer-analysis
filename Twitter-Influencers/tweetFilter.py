@@ -14,7 +14,7 @@ import pandas as pd
 #%% Class Definition
 
 class TweetFilter():
-    def __init__(self, regionCode, startIndex, bufferSize):
+    def __init__(self, regionCode, startIndex = 0, bufferSize = 1000):
         self.failed_tweets = []
         self.status = ''
         self.structuredTweet = ''
@@ -115,6 +115,7 @@ class TweetFilter():
     def PreProcessTweet(self, tweet):
         # Pre Process Tweet Data and obtain 'root' tweet
         body = tweet._json
+        print(body)
         # Get Root Tweet
         retweet_id = "#"
         quoted_id = "#"
