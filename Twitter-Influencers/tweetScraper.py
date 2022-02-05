@@ -22,7 +22,7 @@ class MyStreamListener(tweepy.Stream):
                                     startIndex= 0)
 
         self.tweet_list = []
-        self.file=open("tweet.json","w")
+        self.file=open("tweet.json","w+")
         self.num_tweets = bufferSize
         
     def on_status(self, status):
@@ -36,6 +36,7 @@ class MyStreamListener(tweepy.Stream):
 
         if self.num_tweets <= 0:
             self.file.close()
+            super().disconnect()
             return False
         return True
         
@@ -61,25 +62,26 @@ class MyStreamListener(tweepy.Stream):
 #%%
 
 class TweetScraper:
-    def __init__(self, twitterAppCredentials, topicList, location, buffer_size):
-        self.countryStream = MyStreamListener(twitterAppCredentials, location, buffer_size)
+    def __init__(self, twitterAppCredentials, topicList = None, location = ["US"], buffer_size= 512):
+        self.stream = MyStreamListener(twitterAppCredentials, location, buffer_size)
         self.topicList = topicList
         return
 
-    def BeginStreaming(self):
-        self.countryStream.filter(track=self.topicList, languages = ["en"], threaded=True)
+    def Start(self):
+        print(f"Beginning Stream for {self.topicList}")
+        self.stream.filter(track=self.topicList, languages = ["en"], threaded=True)
         return
     
-    def EndStreaming(self):
-        self.countryStream.disconnect()
+    def End(self):
+        self.stream.disconnect()
         return
     
     def GetDetails(self):
-        print(self.countryStream.dataFilter)#.tweetsList.shape)
-        print("Failed Tweets:\n",self.countryStream.dataFilter.failed_tweets)
-        return self.countryStream.dataFilter.tweetsList
+        print(self.stream.dataFilter)#.tweetsList.shape)
+        print("Failed Tweets:\n",self.stream.dataFilter.failed_tweets)
+        return self.stream.dataFilter.tweetsList
     
     def __del__(self):
         print(f'Deleting {self.topicList}')
-        del self.countryStream
+        del self.stream
            
