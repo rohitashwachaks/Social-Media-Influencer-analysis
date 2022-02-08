@@ -23,18 +23,22 @@ class MyStreamListener(tweepy.Stream):
 
         self.tweet_list = []
         self.file=open("tweet.json","w+")
+        self.file.write('[ ')
         self.num_tweets = bufferSize
         
     def on_status(self, status):
         print("Received tweet")
+        bool = True
+        self.num_tweets -= 1
+        tweet=status._json
+
         if self.num_tweets>0:
-            tweet=status._json
-            self.file.write(json.dumps(tweet)+ '\n')
+            self.file.write(json.dumps(tweet).strip()+ ',')
             self.tweet_list.append(status)
             
-            self.num_tweets -=1
 
         if self.num_tweets <= 0:
+            self.file.write(json.dumps(tweet).strip()+ ']')
             self.file.close()
             super().disconnect()
             return False
@@ -56,7 +60,9 @@ class MyStreamListener(tweepy.Stream):
 
     def __del__(self):
         print("deleting Stream Listener")
-        self.file.close()
+        if not self.file.closed:
+            self.file.write(']')
+            self.file.close()
 
 
 #%%
@@ -80,6 +86,13 @@ class TweetScraper:
         print(self.stream.dataFilter)#.tweetsList.shape)
         print("Failed Tweets:\n",self.stream.dataFilter.failed_tweets)
         return self.stream.dataFilter.tweetsList
+
+    def Status(self):
+        print('running',self.stream.running)
+        print('session',self.stream.session)
+        print('thread',self.stream.thread)
+        print('user_agent',self.stream.user_agent)
+        return
     
     def __del__(self):
         print(f'Deleting {self.topicList}')
