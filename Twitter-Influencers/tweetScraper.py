@@ -7,7 +7,7 @@ import json
 #override tweepy.StreamListener to add logic to on_status
 class MyStreamListener(tweepy.Stream):
 
-    def __init__(self, twitterAppCredentials, location, bufferSize):
+    def __init__(self, twitterAppCredentials, location, bufferSize, file_name):
         super().__init__(
                             consumer_key= twitterAppCredentials['consumer_key'],
                             consumer_secret= twitterAppCredentials['consumer_secret'],
@@ -22,7 +22,7 @@ class MyStreamListener(tweepy.Stream):
                                     startIndex= 0)
 
         self.tweet_list = []
-        self.file=open("tweet.json","w+")
+        self.file=open(file_name,"w+")
         self.file.write('[ ')
         self.num_tweets = bufferSize
         
@@ -68,8 +68,8 @@ class MyStreamListener(tweepy.Stream):
 #%%
 
 class TweetScraper:
-    def __init__(self, twitterAppCredentials, topicList = None, location = ["US"], buffer_size= 512):
-        self.stream = MyStreamListener(twitterAppCredentials, location, buffer_size)
+    def __init__(self, twitterAppCredentials, topicList = None, location = ["US"], buffer_size= 512, file_name="tweet.json"):
+        self.stream = MyStreamListener(twitterAppCredentials, location, buffer_size, file_name)
         self.topicList = topicList
         return
 
