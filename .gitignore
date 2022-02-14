@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 .DS_Store
 Twitter-Influencers/credentials.json
+reddit_creds.json
